@@ -1,0 +1,6 @@
+#!/bin/sh
+# Shim do clone, só até o 1º zeno promover:  ln -s <repo>/zeno/bin/zeno ~/.local/bin/zeno
+# Depois do promover, o ~/.local/bin/zeno é o shim da cópia fixada (ou /usr/local/bin/zeno no modo root): não o troque
+# por este, que roda o código do clone, o mesmo que o agente edita (T68).
+d=$(dirname "$(readlink -f "$0")")
+exec node "$d/../cli.mjs" "$@"

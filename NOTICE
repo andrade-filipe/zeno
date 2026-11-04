@@ -1,0 +1,6 @@
+Zeno
+Copyright 2026 Filipe Andrade Nascimento
+
+Este produto é distribuído sob a Apache License, Version 2.0 (veja LICENSE).
+O Zeno não tem dependências de terceiros embutidas. O gitleaks, usado pelo portão de publicação, é uma ferramenta
+externa: o Zeno confere se ela está instalada e não a distribui.

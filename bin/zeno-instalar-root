@@ -1,0 +1,57 @@
+#!/bin/sh
+# zeno-instalar-root (T95): roda como root, por sudo, chamado pelo zeno promover. Instala uma cópia do Zeno em
+# $RAIZ/<commit> e troca $RAIZ/atual, só se o tar bate com o sha256 e a assinatura da pessoa confere com $RAIZ/pessoa.pub.
+# Não roda git nem node, não lê a casa de ninguém além dos 2 arquivos recebidos, e não apaga nada.
+#   zeno-instalar-root <commit> <sha256> <tar> <assinatura>
+#   zeno-instalar-root --voltar <commit>        (volta o atual para uma cópia já instalada aqui)
+set -eu
+umask 022
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+RAIZ=/opt/zeno
+
+recusa() { shift; echo "zeno-instalar-root: recusado: $*" >&2; exit 1; }
+# do dono que roda o instalador (o root), sem escrita de grupo nem de outros, e não é link
+seguro() {
+  [ -e "$1" ] && [ ! -L "$1" ] || return 1
+  set -- $(stat -c '%u %a' "$1")
+  [ "$1" = "$(id -u)" ] && [ $(( 0$2 & 022 )) -eq 0 ]
+}
+# só hex minúsculo, do tamanho exato (case olha a string inteira, inclusive quebra de linha)
+hex() { case $1 in '' | *[!0-9a-f]*) return 1 ;; esac; [ ${#1} -eq "$2" ]; }
+commit_ok() { hex "$1" 12; }
+troca() { ln -s "$RAIZ/$1" "$RAIZ/.atual.$$" && mv -T "$RAIZ/.atual.$$" "$RAIZ/atual"; echo "zeno-instalar-root: atual -> $1"; }
+
+seguro "$RAIZ" || recusa raiz "$RAIZ não é do root ou é gravável por outro usuário"
+PUB="$RAIZ/pessoa.pub"
+seguro "$PUB" || recusa pub "$PUB ausente, não é do root ou é gravável por outro usuário"
+
+if [ "${1:-}" = "--voltar" ]; then
+  [ $# -eq 2 ] && commit_ok "$2" || recusa uso "uso: --voltar <commit de 12>"
+  [ -d "$RAIZ/$2" ] && [ ! -L "$RAIZ/$2" ] || recusa uso "não há cópia $2 em $RAIZ"
+  troca "$2"; exit 0
+fi
+
+[ $# -eq 4 ] || recusa uso "uso: <commit> <sha256> <tar> <assinatura>"
+COMMIT=$1; SHA=$2
+commit_ok "$COMMIT" || recusa uso "commit inválido"
+hex "$SHA" 64 || recusa uso "sha256 inválido"
+
+# a cópia de trabalho do root: o tar e a assinatura que chegaram ficam aqui, com a mensagem e o veredito
+mkdir -p "$RAIZ/_recebidos"
+T=$(mktemp -d "$RAIZ/_recebidos/$COMMIT.XXXXXX")
+cp -- "$3" "$T/zeno.tar"
+cp -- "$4" "$T/assinatura"
+# duas conferências, cada uma necessária: a pessoa assinou (commit, sha256), e o tar que chegou tem esse sha256
+printf 'zeno-instalar-root 1\ncommit %s\nsha256 %s\n' "$COMMIT" "$SHA" > "$T/mensagem"
+openssl pkeyutl -verify -pubin -inkey "$PUB" -rawin -in "$T/mensagem" -sigfile "$T/assinatura" >/dev/null 2>&1 \
+  || recusa assinatura "assinatura inválida: não é da chave em $PUB, ou é de outro commit ou de outro sha256"
+CALC=$(sha256sum "$T/zeno.tar" | cut -d' ' -f1)
+[ "$CALC" = "$SHA" ] || recusa sha256 "sha256 diferente: o tar não é o que foi provado e assinado"
+
+if [ ! -e "$RAIZ/$COMMIT" ]; then
+  mkdir "$T/copia"
+  tar -xf "$T/zeno.tar" -C "$T/copia" --no-same-owner --no-same-permissions
+  mv -T "$T/copia" "$RAIZ/$COMMIT"
+fi
+troca "$COMMIT"

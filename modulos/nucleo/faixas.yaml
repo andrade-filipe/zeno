@@ -1,0 +1,26 @@
+# Tabela de faixas do módulo nucleo (spec/controle.md). É o PISO: um alvo só aperta.
+zeno: 1
+padrao:
+  P: autonoma
+  M: aprovacao
+  G: aprovacao
+gates:
+  aprovacao:
+    especificacao: [revisor]
+    entrega: [dono]
+  nunca:
+    especificacao: [revisor]
+    verificacao: [revisor]
+    entrega: [dono]
+acoes:
+  entrega.push-main:
+    faixa: aprovacao
+    aprova: [dono]
+  entrega.publicar:
+    faixa: nunca
+  gasto.usd:
+    faixa: nunca
+  fronteira.saida:
+    faixa: nunca
+  modulo.atualizar:
+    faixa: aprovacao

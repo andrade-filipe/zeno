@@ -1,0 +1,10 @@
+nome: nucleo
+versao: 0.1.0
+obrigatorio: true
+agents_md: agents-md.md
+skills:
+  zeno: [intencao, especificacao, execucao, verificacao, entrega, observacao, aprendizado]
+cartoes: cartoes
+faixas: faixas.yaml
+lint: lint.yaml
+requisitos_de_prova: [guardas.json]

@@ -1,0 +1,989 @@
+{
+  "v": 1,
+  "nota": "Contrato com o censo da avaliacao/ (spec/seguranca.md, D33). Ativa: probe + mutação por marcador /*G:id*/ → false&& numa cópia temporária; o probe tem de falhar. Adiada: orçamento de complexidade (T56); C1, C2, C3, C5 e C6 não se adiam. shell-por-parser foi reativada em 2026-11-02 (T67).",
+  "guardas": [
+    {
+      "id": "trava-sensor",
+      "camada": 3,
+      "fecha": "T117",
+      "estado": "ativa",
+      "o_que": "o nó de sensor (origem sensor:<nome>) passa só uma vez por sensor por semana ISO e no máximo 5 por semana no alvo; o que passa sai 1 e nada é gravado",
+      "probe": "test/probes/trava-sensor.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:trava-sensor*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/escrita.mjs"
+      ]
+    },
+    {
+      "id": "portao-commit",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o snapshot do portão sai do commit (git archive), não da pasta no disco: arquivo ignorado pelo git ou não rastreado fica fora, e o snapshot é exatamente o commit menos o que fica fora",
+      "probe": "test/probes/portao-commit.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-commit*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "portao-nomes",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o check 1 do portão de publicação reprova, sem escrever no clone, a lista de nomes da máquina ausente ou vazia e um nome da lista no snapshot (texto ou caminho, sem acento e sem caixa)",
+      "probe": "test/probes/portao-nomes.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-nomes*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "portao-casa",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o check 2 do portão reprova caminho de casa real no snapshot: a casa da máquina (também com '-') e /home/<nome> fora dos de exemplo",
+      "probe": "test/probes/portao-casa.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-casa*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "portao-gitleaks",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o check 3 do portão reprova sem o gitleaks no PATH e quando o gitleaks detect --no-git acha segredo ou falha no snapshot",
+      "probe": "test/probes/portao-gitleaks.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-gitleaks*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "portao-lista",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o check 4 do portão reprova arquivo do snapshot fora da lista do que entra (ou em pasta que fica fora, como .agents) e arquivo da lista que falta (LICENSE, NOTICE, CONTRIBUTING, SECURITY, CHANGELOG, docs)",
+      "probe": "test/probes/portao-lista.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-lista*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "portao-historico",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o check 5 do portão reprova o clone público com commit que não veio do portão (fora dos publicacao.preparada do ledger) e o clone sujo",
+      "probe": "test/probes/portao-historico.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-historico*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "portao-root",
+      "camada": 3,
+      "fecha": "T118",
+      "estado": "ativa",
+      "o_que": "o check 6 do portão reprova enquanto a cópia que guarda não é a do root (/opt/zeno do root com a cópia atual)",
+      "probe": "test/probes/portao-root.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-root*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
+      "id": "piso-tamanho",
+      "camada": 3,
+      "fecha": "T115",
+      "estado": "ativa",
+      "o_que": "o ajustar que sobe o tamanho e deixa a faixa declarada abaixo do piso do tamanho novo sobe a faixa ao piso no mesmo comando (ajuste e faixa.alterada com motivo tamanho)",
+      "probe": "test/probes/piso-tamanho.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:piso-tamanho*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/escrita.mjs"
+      ]
+    },
+    {
+      "id": "stop-sem-no",
+      "camada": 2,
+      "fecha": "T113",
+      "estado": "ativa",
+      "o_que": "no Stop, o transcript com edição de arquivo do alvo fora de .agents/ (ou git commit) e sem nó tocado faz o guarda parar pedir o registrar --retro pronto e gravar a recusa sem-no",
+      "probe": "test/probes/stop-sem-no.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:stop-sem-no*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/guarda.mjs"
+      ]
+    },
+    {
+      "id": "stop-formato",
+      "camada": 0,
+      "fecha": "T113",
+      "estado": "ativa",
+      "o_que": "o guarda parar lê a entrada do Stop do Claude Code (stop_hook_active, transcript_path, cwd) e responde só decision/reason; com stop_hook_active nunca bloqueia (sem loop)",
+      "probe": "test/probes/stop-formato.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:stop-formato*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/guarda.mjs"
+      ]
+    },
+    {
+      "id": "commit-sem-no",
+      "camada": 4,
+      "fecha": "T113",
+      "estado": "ativa",
+      "o_que": "o validar --staged do githook para o commit de agente com arquivo fora de .agents/, sem evento novo de nó e sem nó em Execução; a pessoa só leva o aviso",
+      "probe": "test/probes/commit-sem-no.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:commit-sem-no*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/validar.mjs"
+      ]
+    },
+    {
+      "id": "fiacao-versionada",
+      "camada": 1,
+      "fecha": "T113",
+      "estado": "ativa",
+      "o_que": "num alvo pessoal adotado sem settings.json próprio e sem fiacao: local, o sync gera a fiação do Zeno no .claude/settings.json versionado",
+      "probe": "test/probes/fiacao-versionada.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:fiacao-versionada*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/instalar.mjs"
+      ]
+    },
+    {
+      "id": "ferramentas-sem-segredo",
+      "camada": 0,
+      "fecha": "T107",
+      "estado": "ativa",
+      "o_que": "o zeno ferramentas confere login e serviço só pelo código de saída da tabela fixa; a saída do comando (um token, por exemplo) nunca chega à saída do zeno, e nada é gravado",
+      "probe": "test/probes/ferramentas-sem-segredo.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:ferramentas-sem-segredo*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "cli.mjs"
+      ]
+    },
+    {
+      "id": "deny-camada1",
+      "camada": 1,
+      "fecha": "C3",
+      "estado": "ativa",
+      "o_que": "cada regra de deny gerada casa com um caminho real; regra órfã recusa o sync",
+      "probe": "test/probes/deny-camada1.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:deny-camada1*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/instalar.mjs"
+      ]
+    },
+    {
+      "id": "hook-fail-closed",
+      "camada": 2,
+      "fecha": "C3",
+      "estado": "ativa",
+      "o_que": "os hooks que guardam negam quando o zeno falha ou falta (|| exit 2)",
+      "probe": "test/probes/hook-fail-closed.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:hook-fail-closed*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/instalar.mjs"
+      ]
+    },
+    {
+      "id": "guarda-shell",
+      "camada": 2,
+      "fecha": "C1",
+      "estado": "ativa",
+      "o_que": "escrita por shell em arquivo de controle, verbo de pessoa (gate, chave, caixa --aprovar, guarda, promover), ZENO_ATOR/CLAUDECODE e reescrita de histórico são negados",
+      "probe": "test/probes/guarda-shell.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:guarda-shell*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/shell.mjs",
+        "core/verbos/guarda.mjs"
+      ]
+    },
+    {
+      "id": "assinatura",
+      "camada": 3,
+      "fecha": "C1",
+      "estado": "ativa",
+      "o_que": "decisão humana (gate, orçamento, afrouxar, cancelar, descontaminar) sem assinatura Ed25519 válida não muda o estado",
+      "probe": "test/probes/assinatura.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:assinatura*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/projecao.mjs"
+      ]
+    },
+    {
+      "id": "aprovado-mudou",
+      "camada": 3,
+      "fecha": "C6",
+      "estado": "ativa",
+      "o_que": "seção aprovada alterada depois do gate: o próximo avancar reabre o gate",
+      "probe": "test/probes/aprovado-mudou.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:aprovado-mudou*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/fluxo.mjs"
+      ]
+    },
+    {
+      "id": "cartao-gate",
+      "camada": 3,
+      "fecha": "D36 (T75)",
+      "estado": "ativa",
+      "o_que": "gate humano só abre com o cartão de decisão completo (6 campos, nenhum vazio ou genérico, 1 a 3 coisas a conferir)",
+      "probe": "test/probes/cartao-gate.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:cartao-gate*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/fluxo.mjs"
+      ]
+    },
+    {
+      "id": "expressa-codigo",
+      "camada": 3,
+      "fecha": "D36 (T76)",
+      "estado": "ativa",
+      "o_que": "P de via expressa de código (--codigo) só fecha se o commit da ref fica em cli.mjs, core/, bin/, modulos/ ou test/*.test.mjs; spec/, .agents/ e a prova das guardas (guardas.json, test/probes/, test/censo.mjs, test/ajuda.mjs, test/fp-shell.mjs) reprovam a Entrega",
+      "probe": "test/probes/expressa-codigo.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:expressa-codigo*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/fluxo.mjs"
+      ]
+    },
+    {
+      "id": "piso-faixa",
+      "camada": 3,
+      "fecha": "C2",
+      "estado": "ativa",
+      "o_que": "agente não declara faixa abaixo do piso do tamanho; P com commit acima de limites.P_linhas é reprovado",
+      "probe": "test/probes/piso-faixa.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:piso-faixa*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/fluxo.mjs",
+        "core/projecao.mjs",
+        "core/verbos/escrita.mjs"
+      ]
+    },
+    {
+      "id": "afrouxar",
+      "camada": 3,
+      "fecha": "C2",
+      "estado": "ativa",
+      "o_que": "afrouxar pelo efeito (faixa, ação, check, dependência, origem, executor) pede pessoa, motivo e assinatura",
+      "probe": "test/probes/afrouxar.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:afrouxar*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/projecao.mjs",
+        "core/verbos/escrita.mjs"
+      ]
+    },
+    {
+      "id": "faixa-nunca",
+      "camada": 3,
+      "fecha": "C2",
+      "estado": "ativa",
+      "o_que": "nó de faixa efetiva nunca não tem agente como executor nem sai da Execução por agente",
+      "probe": "test/probes/faixa-nunca.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:faixa-nunca*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/fluxo.mjs",
+        "core/verbos/escrita.mjs"
+      ]
+    },
+    {
+      "id": "ator-falso",
+      "camada": 3,
+      "fecha": "C1",
+      "estado": "ativa",
+      "o_que": "dentro do Claude Code, ZENO_ATOR de pessoa é recusado",
+      "probe": "test/probes/ator-falso.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:ator-falso*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/sessao.mjs"
+      ]
+    },
+    {
+      "id": "procedencia",
+      "camada": 3,
+      "fecha": "C5",
+      "estado": "ativa",
+      "o_que": "origem não confiável sobe a faixa efetiva para aprovação",
+      "probe": "test/probes/procedencia.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:procedencia*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/projecao.mjs"
+      ]
+    },
+    {
+      "id": "contaminacao",
+      "camada": 3,
+      "fecha": "C5",
+      "estado": "ativa",
+      "o_que": "enquanto o alvo tem a marca (WebFetch/WebSearch/MCP numa sessão ainda aberta), todo nó novo no alvo nasce com origem sessao:contaminada",
+      "probe": "test/probes/contaminacao.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:contaminacao*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/escrita.mjs"
+      ]
+    },
+    {
+      "id": "disjuntor",
+      "camada": 3,
+      "fecha": "C7",
+      "estado": "ativa",
+      "o_que": "consumo acima do teto (tokens/usd >, tentativas ≥) pausa o nó; teto diário bloqueia o alvo",
+      "probe": "test/probes/disjuntor.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:disjuntor*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/projecao.mjs"
+      ]
+    },
+    {
+      "id": "lint-msg",
+      "camada": 3,
+      "fecha": "D23",
+      "estado": "ativa",
+      "o_que": "mensagem sem campo obrigatório não entra no fio",
+      "probe": "test/probes/lint-msg.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:lint-msg*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/mensagens.mjs"
+      ]
+    },
+    {
+      "id": "append-only",
+      "camada": 4,
+      "fecha": "T6",
+      "estado": "ativa",
+      "o_que": "ledger ou fio commitado editado, truncado ou removido no índice",
+      "probe": "test/probes/append-only.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:append-only*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/validar.mjs"
+      ]
+    },
+    {
+      "id": "projecao",
+      "camada": 4,
+      "fecha": "T1",
+      "estado": "ativa",
+      "o_que": "campo de controle do frontmatter diferente do que o ledger projeta",
+      "probe": "test/probes/projecao.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:projecao*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/validar.mjs"
+      ]
+    },
+    {
+      "id": "deriva",
+      "camada": 4,
+      "fecha": "D12",
+      "estado": "ativa",
+      "o_que": "gerado diferente do canônico (sync --check)",
+      "probe": "test/probes/deriva.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:deriva*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/instalar.mjs"
+      ]
+    },
+    {
+      "id": "isolamento",
+      "camada": 4,
+      "fecha": "D3",
+      "estado": "ativa",
+      "o_que": "import ou symlink para conhecimento/ ou avaliacao/",
+      "probe": "test/probes/isolamento.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:isolamento*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/validar.mjs"
+      ]
+    },
+    {
+      "id": "sem-dependencia",
+      "camada": 4,
+      "fecha": "D28",
+      "estado": "ativa",
+      "o_que": "node_modules/ ou dependência em package.json",
+      "probe": "test/probes/sem-dependencia.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:sem-dependencia*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/validar.mjs"
+      ]
+    },
+    {
+      "id": "sem-flag-de-teste",
+      "camada": 4,
+      "fecha": "T16",
+      "estado": "ativa",
+      "o_que": "código do core lê o processo (ambiente, entrada, terminal) ou tem variável de modo teste",
+      "probe": "test/probes/sem-flag-de-teste.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:sem-flag-de-teste*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/validar.mjs"
+      ]
+    },
+    {
+      "id": "transcript-formato",
+      "camada": 0,
+      "fecha": "T39",
+      "estado": "ativa",
+      "o_que": "o leitor do transcript ainda acha message.id + usage no formato atual",
+      "probe": "test/probes/transcript-formato.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:transcript-formato*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/guarda.mjs"
+      ]
+    },
+    {
+      "id": "gasto-subagentes",
+      "camada": 0,
+      "fecha": "D19",
+      "estado": "ativa",
+      "o_que": "os transcripts dos subagentes (<sessão>/subagents/agent-*.jsonl) entram na medição do gasto da sessão",
+      "probe": "test/probes/gasto-subagentes.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:gasto-subagentes*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/gasto.mjs"
+      ]
+    },
+    {
+      "id": "shell-por-parser",
+      "camada": 2,
+      "fecha": "T67 (D19)",
+      "estado": "ativa",
+      "o_que": "a guarda de shell decide por tokenizador: texto entre aspas num argumento e código que só lê passam; os 2 falsos positivos do 1º dia de hooks, literais, passam",
+      "probe": "test/probes/shell-por-parser.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:shell-por-parser*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/shell.mjs"
+      ],
+      "reativada": "2026-11-02, decisão da orquestradora: 2 falsos positivos no 1º dia de hooks ativos (D19)"
+    },
+    {
+      "id": "shell-ilegivel",
+      "camada": 2,
+      "fecha": "T67 (C3)",
+      "estado": "ativa",
+      "o_que": "comando que o tokenizador não entende (aspas, $( ), crase ou here-doc sem fechar; aninhamento fundo) é negado, com o porquê",
+      "probe": "test/probes/shell-ilegivel.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:shell-ilegivel*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/shell.mjs"
+      ]
+    },
+    {
+      "id": "copia-fixada",
+      "camada": 2,
+      "fecha": "T68",
+      "estado": "ativa",
+      "o_que": "o código que guarda (shim da pessoa, hooks via PATH, validar do pre-commit) roda da cópia fixada promovida por pessoa, não do repositório que o agente edita",
+      "probe": "test/probes/copia-fixada.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:copia-fixada*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/promover.mjs"
+      ]
+    },
+    {
+      "id": "chave-antes-da-prova",
+      "camada": 3,
+      "fecha": "T72",
+      "estado": "ativa",
+      "o_que": "o promover confere a chave e a passphrase da pessoa antes de rodar testes e censo: passphrase errada sai com 1 sem ter rodado nada",
+      "probe": "test/probes/chave-antes-da-prova.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:chave-antes-da-prova*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/promover.mjs"
+      ]
+    },
+    {
+      "id": "bloco-pela-porta",
+      "camada": 1,
+      "fecha": "T83",
+      "estado": "ativa",
+      "o_que": "na adoção, o bloco do Zeno não entra no AGENTS.md commitado: chega pelo SessionStart do settings.local.json, junto com as travas; o bloco de adoções antigas sai no sync",
+      "probe": "test/probes/adocao-intacta.test.mjs",
+      "mutacao": { "marcador": "/*G:bloco-pela-porta*/", "por": "false&&" },
+      "caminhos": ["core/verbos/instalar.mjs"]
+    },
+    {
+      "id": "sessao-rede",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "o zeno sessao abre o agente num namespace de rede próprio: o 127.0.0.1 do host (o do Windows, em mirrored) não é alcançável; a saída é só pelo proxy",
+      "probe": "test/probes/sessao-fronteira.test.mjs",
+      "mutacao": { "marcador": "/*G:sessao-rede*/", "por": "false&&" },
+      "caminhos": ["core/verbos/lancar.mjs"]
+    },
+    {
+      "id": "sessao-env",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "o env da sessão é só a allowlist, e o interop, a tela, o barramento, o canal entre sessões e o ZENO_ATOR nunca entram, nem se o perfil pedir",
+      "probe": "test/probes/sessao-fronteira.test.mjs",
+      "mutacao": { "marcador": "/*G:sessao-env*/", "por": "false&&" },
+      "caminhos": ["core/verbos/lancar.mjs"]
+    },
+    {
+      "id": "sessao-repo-so-leitura",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "dentro da sessão, o controle do git (.git/config, hooks, info), o .githooks/, o .claude/, o .mcp.json e o .zed/ são só leitura: o repo deixa de ser canal para o que roda fora",
+      "probe": "test/probes/sessao-fronteira.test.mjs",
+      "mutacao": { "marcador": "/*G:sessao-repo-so-leitura*/", "por": "false&&" },
+      "caminhos": ["core/verbos/lancar.mjs"]
+    },
+    {
+      "id": "sessao-seccomp",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "o seccomp da sessão nega AF_VSOCK (ignora o namespace de rede no 6.6), TIOCSTI/TIOCLINUX, o chaveiro do kernel e o io_uring",
+      "probe": "test/probes/sessao-fronteira.test.mjs",
+      "mutacao": { "marcador": "/*G:sessao-seccomp*/", "por": "false&&" },
+      "caminhos": ["core/verbos/lancar.mjs", "core/seccomp.mjs"]
+    },
+    {
+      "id": "sessao-proibidos",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "o perfil de um agente nunca expõe a casa, a chave do Zeno, ~/.ssh, ~/.aws, ~/.claude, /mnt nem o interop (le, credenciais, escreve e config_dir)",
+      "probe": "test/probes/sessao-perfil.test.mjs",
+      "mutacao": { "marcador": "/*G:sessao-proibidos*/", "por": "false&&" },
+      "caminhos": ["core/verbos/lancar.mjs"]
+    },
+    {
+      "id": "proxy-allowlist",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "o proxy da sessão só conecta a host e porta da allowlist do perfil",
+      "probe": "test/probes/sessao-fronteira.test.mjs",
+      "mutacao": { "marcador": "/*G:proxy-allowlist*/", "por": "false&&" },
+      "caminhos": ["core/proxy.mjs"]
+    },
+    {
+      "id": "proxy-privado",
+      "camada": 0,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "o proxy nega endereço privado ou de loopback mesmo para host permitido (o gateway hermes e o 127.0.0.1 do Windows)",
+      "probe": "test/probes/sessao-fronteira.test.mjs",
+      "mutacao": { "marcador": "/*G:proxy-privado*/", "por": "false&&" },
+      "caminhos": ["core/proxy.mjs"]
+    },
+    {
+      "id": "ator-marcador",
+      "camada": 3,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "dentro do zeno sessao, o ator é o agente do marcador /run/zeno-agente e ZENO_ATOR não o troca; verbo de pessoa é recusado",
+      "probe": "test/probes/sessao-perfil.test.mjs",
+      "mutacao": { "marcador": "/*G:ator-marcador*/", "por": "false&&" },
+      "caminhos": ["core/sessao.mjs"]
+    },
+    {
+      "id": "marca-sandbox",
+      "camada": 3,
+      "fecha": "T105 (D9, passo 1)",
+      "estado": "ativa",
+      "o_que": "todo evento leva sandbox: fora (sem marcador) ou sessao (declarado pelo marcador, com o id do sessao.aberta em sessao); a marca entra na assinatura e o ledger sem ela segue válido",
+      "probe": "test/probes/marca-sandbox.test.mjs",
+      "mutacao": { "marcador": "/*G:marca-sandbox*/", "por": "false&&" },
+      "caminhos": ["core/sessao.mjs"]
+    },
+    {
+      "id": "ator-pai-agente",
+      "camada": 3,
+      "fecha": "T82 (achado D39)",
+      "estado": "ativa",
+      "o_que": "um processo com TTY e o e-mail do git da pessoa não sai como ela se uma CLI de agente conhecida está acima dele na árvore de processos",
+      "probe": "test/probes/sessao-perfil.test.mjs",
+      "mutacao": { "marcador": "/*G:ator-pai-agente*/", "por": "false&&" },
+      "caminhos": ["core/sessao.mjs"]
+    },
+    {
+      "id": "sem-sessao",
+      "camada": 2,
+      "fecha": "T82",
+      "estado": "ativa",
+      "o_que": "com sessao_obrigatoria, o hook nega toda ferramenta fora da fronteira do zeno sessao (sem marcador, interop ou chave à vista, env fora da allowlist)",
+      "probe": "test/probes/sem-sessao.test.mjs",
+      "mutacao": { "marcador": "/*G:sem-sessao*/", "por": "false&&" },
+      "caminhos": ["core/verbos/guarda.mjs"]
+    },
+    {
+      "id": "caixa-abre-o-que-importa",
+      "camada": 3,
+      "fecha": "D40 (D36)",
+      "estado": "ativa",
+      "o_que": "a caixa resume todos os gates numa tabela e expande sozinha os de risco alto, de segurança (tirado do diff), MUDOU ou sem nível; os de risco baixo ficam fechados, e v N abre um",
+      "probe": "test/probes/caixa-legivel.test.mjs",
+      "mutacao": { "marcador": "/*G:caixa-abre-o-que-importa*/", "por": "false&&" },
+      "caminhos": ["core/vista.mjs", "core/verbos/escrita.mjs"]
+    },
+    {
+      "id": "prova-isolada",
+      "camada": 0,
+      "fecha": "T90",
+      "estado": "ativa",
+      "o_que": "o promover roda os testes e o censo inteiros num bwrap sem rede, com a casa em tmpfs e o repositório só leitura; nada roda fora (a sonda que cria bwrap aninha)",
+      "probe": "test/probes/prova-isolada.test.mjs",
+      "mutacao": { "marcador": "/*G:prova-isolada*/", "por": "false&&" },
+      "caminhos": ["core/verbos/promover.mjs"]
+    },
+    {
+      "id": "instalar-sha256",
+      "camada": 0,
+      "fecha": "T95",
+      "estado": "ativa",
+      "o_que": "o instalador root recusa um tar cujo sha256 não é o assinado (troca no meio do caminho)",
+      "probe": "test/probes/instalar-sha256.test.mjs",
+      "mutacao": { "marcador": "recusa sha256 ", "por": "true sha256 " },
+      "caminhos": ["bin/zeno-instalar-root"]
+    },
+    {
+      "id": "instalar-assinatura",
+      "camada": 0,
+      "fecha": "T95",
+      "estado": "ativa",
+      "o_que": "o instalador root recusa cópia assinada por outra chave ou assinatura de outro commit",
+      "probe": "test/probes/instalar-assinatura.test.mjs",
+      "mutacao": { "marcador": "recusa assinatura ", "por": "true assinatura " },
+      "caminhos": ["bin/zeno-instalar-root"]
+    },
+    {
+      "id": "instalar-pub",
+      "camada": 0,
+      "fecha": "T95",
+      "estado": "ativa",
+      "o_que": "o instalador root recusa sem pessoa.pub, ou com ela de outro dono ou gravável por grupo ou outros",
+      "probe": "test/probes/instalar-pub.test.mjs",
+      "mutacao": { "marcador": "recusa pub ", "por": "true pub " },
+      "caminhos": ["bin/zeno-instalar-root"]
+    },
+    {
+      "id": "teto-assinado",
+      "camada": 3,
+      "fecha": "T93",
+      "estado": "ativa",
+      "o_que": "a liberação do teto diário do alvo (zeno gate --teto) só vale assinada por uma pessoa; forjada, o alvo segue preso e o validar acusa",
+      "probe": "test/probes/teto-assinado.test.mjs",
+      "mutacao": { "marcador": "/*G:teto-assinado*/", "por": "false&&" },
+      "caminhos": ["core/projecao.mjs"]
+    },
+    {
+      "id": "mcp-allowlist",
+      "camada": 2,
+      "fecha": "T99",
+      "estado": "ativa",
+      "o_que": "o hook pre-tool (matcher mcp__.*) nega todo servidor MCP fora da lista mcp: do alvo (padrão: nenhum) e do perfil do agente; o deny estático cobre os de escrita conhecidos",
+      "probe": "test/probes/mcp-allowlist.test.mjs",
+      "mutacao": { "marcador": "/*G:mcp-allowlist*/", "por": "false&&" },
+      "caminhos": ["core/verbos/guarda.mjs"]
+    },
+    {
+      "id": "despausa-assinada",
+      "camada": 3,
+      "fecha": "T98",
+      "estado": "ativa",
+      "o_que": "só evento assinado de pessoa (gate --orcamento ou gate --despausar) tira o nó da pausa do disjuntor; o agente que baixa o orçamento segue pausado",
+      "probe": "test/probes/despausa-assinada.test.mjs",
+      "mutacao": { "marcador": "/*G:despausa-assinada*/", "por": "false&&" },
+      "caminhos": ["core/projecao.mjs"]
+    },
+    {
+      "id": "pausa-fato",
+      "camada": 3,
+      "fecha": "T98",
+      "estado": "ativa",
+      "o_que": "a pausa é regra da projeção: fase.avancou, gate.aberto e gate.decidido num nó pausado não mudam o nó, e o validar acusa",
+      "probe": "test/probes/pausa-fato.test.mjs",
+      "mutacao": { "marcador": "/*G:pausa-fato*/", "por": "false&&" },
+      "caminhos": ["core/projecao.mjs"]
+    },
+    {
+      "id": "githooks-saida",
+      "camada": 4,
+      "fecha": "T97",
+      "estado": "ativa",
+      "o_que": "o sync --check acusa o clone cujo core.hooksPath saiu de .agents/githooks depois de o Zeno ligá-lo, e o clone livre ainda não ligado",
+      "probe": "test/probes/githooks-saida.test.mjs",
+      "mutacao": { "marcador": "/*G:githooks-saida*/", "por": "false&&" },
+      "caminhos": ["core/verbos/instalar.mjs"]
+    },
+    {
+      "id": "githooks-intacto",
+      "camada": 4,
+      "fecha": "T97",
+      "estado": "ativa",
+      "o_que": "o sync não liga o gate de commit num clone que já tem o seu (core.hooksPath em qualquer escopo, ou hook ativo em .git/hooks): avisa como encadear",
+      "probe": "test/probes/githooks-intacto.test.mjs",
+      "mutacao": { "marcador": "/*G:githooks-intacto*/", "por": "false&&" },
+      "caminhos": ["core/verbos/instalar.mjs"]
+    },
+    {
+      "id": "gate-retirado",
+      "camada": 3,
+      "fecha": "T87",
+      "estado": "ativa",
+      "o_que": "o gate que o agente retira com zeno revisar sai da caixa (o todos não o aprova) e volta no próximo avancar",
+      "probe": "test/probes/caixa-revisao.test.mjs",
+      "mutacao": { "marcador": "/*G:gate-retirado*/", "por": "false&&" },
+      "caminhos": ["core/projecao.mjs"]
+    },
+    {
+      "id": "caixa-mudou",
+      "camada": 3,
+      "fecha": "T87",
+      "estado": "ativa",
+      "o_que": "gate humano cujo texto mudou depois de aberto fica fora do todos da caixa, marcado MUDOU, e só se aprova por número",
+      "probe": "test/probes/caixa-revisao.test.mjs",
+      "mutacao": { "marcador": "/*G:caixa-mudou*/", "por": "false&&" },
+      "caminhos": ["core/verbos/escrita.mjs"]
+    },
+    {
+      "id": "aprovado-mudou-aviso",
+      "camada": 4,
+      "fecha": "T87",
+      "estado": "ativa",
+      "o_que": "seção aprovada que mudou é erro no validar enquanto o gate daquela fase não foi reaberto; só com ele reaberto vira aviso",
+      "probe": "test/probes/caixa-revisao.test.mjs",
+      "mutacao": { "marcador": "/*G:aprovado-mudou-aviso*/", "por": "true||" },
+      "caminhos": ["core/verbos/validar.mjs"]
+    },
+    {
+      "id": "promover-entrega",
+      "camada": 3,
+      "fecha": "T79",
+      "estado": "ativa",
+      "o_que": "o promover recusa, antes da passphrase, uma cópia com código de nó cujo gate de Entrega não foi aprovado (expressa de código à parte); na caixa, a Entrega aprovada na mesma rodada conta",
+      "probe": "test/probes/promover-entrega.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:promover-entrega*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/promover.mjs"
+      ]
+    },
+    {
+      "id": "adocao-intacta",
+      "camada": 1,
+      "fecha": "T74",
+      "estado": "ativa",
+      "o_que": "na adoção, o harness do repo fica idêntico byte a byte fora do bloco do Zeno no AGENTS.md, e as regras do Zeno (deny e hooks) vão no .claude/settings.local.json; local manual existente faz o sync recusar sem tocar",
+      "probe": "test/probes/adocao-intacta.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:adocao-intacta*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/instalar.mjs",
+        "core/protegidos.mjs"
+      ]
+    },
+    {
+      "id": "settings-portatil",
+      "camada": 1,
+      "fecha": "T69",
+      "estado": "ativa",
+      "o_que": "os gerados (settings.json, gerados.lock) não citam o caminho do checkout: sync --check limpo num clone e num worktree ligado",
+      "probe": "test/probes/settings-portatil.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:settings-portatil*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/instalar.mjs"
+      ]
+    },
+    {
+      "id": "guarda-arquivo",
+      "camada": 2,
+      "fecha": "T69",
+      "estado": "ativa",
+      "o_que": "hook pre-tool de Edit/Write/MultiEdit/NotebookEdit nega o arquivo protegido e o negar_escrita de fora do alvo, resolvidos contra a raiz do checkout (segue symlink)",
+      "probe": "test/probes/guarda-arquivo.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:guarda-arquivo*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/guarda.mjs",
+        "core/protegidos.mjs"
+      ]
+    },
+    {
+      "id": "registro-maquina",
+      "camada": 2,
+      "fecha": "T104 (H21)",
+      "estado": "ativa",
+      "o_que": "o hook pre-tool de Edit/Write/MultiEdit/NotebookEdit nega os arquivos do registro de alvos da máquina (as regras por pasta, da pessoa, e a lista, só da CLI), também por ~, por symlink e na raiz do modo root; o shell já é negado pela guarda de shell (pasta da cópia fixada)",
+      "probe": "test/probes/registro-maquina.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:registro-maquina*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/verbos/guarda.mjs",
+        "core/alvos.mjs"
+      ]
+    },
+    {
+      "id": "promover-so-pessoal",
+      "camada": 3,
+      "fecha": "T106",
+      "estado": "ativa",
+      "o_que": "depois de trocar a cópia, o promover só roda o sync nos alvos que o registro diz que a frota opera (pessoal, checkout principal); alvo de empresa ou de cliente com deriva fica byte a byte igual, mesmo com a confirmação da pessoa",
+      "probe": "test/probes/promover-so-pessoal.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:promover-so-pessoal*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/frota.mjs",
+        "core/verbos/promover.mjs"
+      ]
+    },
+    {
+      "id": "pessoas-hash",
+      "camada": 3,
+      "fecha": "T73 (T54, D35)",
+      "estado": "ativa",
+      "o_que": "em alvo de fronteira empresa/cliente, nenhuma pessoa em claro no disco (ledger, fio, vista do nó, sistema.yaml): h:8hex de sal+id, sal e nomes fora do git; sem sal, nada escreve",
+      "probe": "test/probes/pessoas-hash.test.mjs",
+      "mutacao": {
+        "marcador": "/*G:pessoas-hash*/",
+        "por": "false&&"
+      },
+      "caminhos": [
+        "core/pessoas.mjs",
+        "core/sessao.mjs"
+      ]
+    },
+    {
+      "id": "gate-juiz",
+      "camada": 3,
+      "fecha": "Inc. 4",
+      "estado": "declarada, adiada",
+      "o_que": "gate do tipo juiz (LLM avalia a saída da fase)",
+      "custo": "rodada paga de LLM por gate; hoje sai com código 6",
+      "sinal_reativa": "o primeiro módulo que declara gate juiz em faixas.yaml"
+    },
+    {
+      "id": "custo-por-ferramenta",
+      "camada": 2,
+      "fecha": "C4 (parcial)",
+      "estado": "declarada, adiada",
+      "o_que": "custo medido por chamada de ferramenta (hook PostToolUse em toda ferramenta)",
+      "custo": "um processo node por chamada de ferramenta; a medição no fim da sessão já dá tokens e bytes do Sistema",
+      "sinal_reativa": "fim-sessao com fonte indisponivel em mais de 1 de 10 sessões, ou sessão com 3+ nós em que a divisão igual distorce o placar"
+    },
+    {
+      "id": "trava-entre-maquinas",
+      "camada": 3,
+      "fecha": "T44",
+      "estado": "declarada, adiada",
+      "o_que": "trava do alvo valendo entre máquinas (hoje é arquivo O_EXCL local; ledger junta por merge=union)",
+      "custo": "servidor ou lock remoto para uma pessoa em uma máquina",
+      "sinal_reativa": "segunda máquina ou segunda pessoa escrevendo no mesmo alvo (eventos com cmd de hosts diferentes no mesmo dia)"
+    }
+  ]
+}

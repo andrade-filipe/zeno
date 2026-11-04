@@ -1,0 +1,20 @@
+Caixa de ana · 2 gates · 1 de risco alto · 0 mudaram
+
+ #  fase           tipo      risco  gate
+ 1  Especificação  registro  baixo  Testes apagam as pastas temporárias que criam
+ 2  Especificação  registro  ALTO   O bloco do AGENTS.md só vale onde o Zeno está instalado
+
+── 2 · Especificação · O bloco do AGENTS.md só vale onde o Zeno está instalado ─────────────────────
+   Muda      Num repo adotado, o bloco do Zeno sai do AGENTS.md commitado e chega ao agente pelo
+             SessionStart, junto com as travas.
+   Porquê    O bloco ia para toda sessão do time; as travas, só para a sua máquina (D39).
+   Risco     ALTO · conferido na doc, não numa sessão real; uma subpasta fica sem bloco e sem
+             travas.
+   Desfazer  git revert ee356f5; zeno sync no alvo adotado
+   Reprovar  reabro a Execução; o bloco segue no AGENTS.md
+   Conferir  1. o pelaPorta em core/verbos/instalar.mjs
+             2. o probe test/probes/adocao-intacta.test.mjs
+             3. se quer uma sessão real
+                                             o-bloco-do-agents-md-so-vale-onde-o-zeno · sha a157df26
+
+1 gate de risco baixo ou nenhum ficou fechado: "v N" mostra um; --detalhe mostra todos.
