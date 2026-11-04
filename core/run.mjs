@@ -12,7 +12,7 @@ import { ev, gravar, fechar } from "./sessao.mjs";
 import { Recusa } from "./util.mjs";
 import { lerSessaoDaCli, medirNaCli } from "./gasto.mjs";
 
-export const VERSAO = "0.1.1";
+export const VERSAO = "0.1.2";
 const BOOL = new Set(["json", "expressa", "staged", "reparar", "adocao", "sem-sync", "aprovar", "reprovar", "descontaminar", "sem-agents", "retro", "codigo", "promover", "bloco", "detalhe", "completo", "plano", "pem", "despausar", "descobrir", "esquecer", "obsidian"]);
 const REPET = new Set(["acao", "origem", "check", "depende", "refs"]);
 const MUDA = new Set(["novo", "avancar", "gate", "ajustar", "revisar", "msg", "registrar", "contexto", "install", "sync", "promover", "sessao"]);

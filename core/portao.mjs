@@ -59,7 +59,9 @@ export function reescrever(txt, origem, destino, { src, docs }) {
 }
 
 // T119: a doc vem do monorepo, onde o código mora em zeno/; no repo público ele está na raiz. Uma tabela fixa e pequena
-// troca os caminhos nos .md e no bin/zeno; o check 7 (`layout`) reprova o que sobrar, inclusive frase nova fora dela.
+// troca os caminhos no ESCOPO (docs/, bin/, README.md e AGENTS.md); o check 7 (`layout`) reprova o que sobrar ali,
+// inclusive frase nova fora dela. A spec e os testes saem como estão: descrevem a própria troca (v0.1.2).
+export const ESCOPO = (f) => /^(docs|bin)\//.test(f) || f === "README.md" || f === "AGENTS.md";
 export const LAYOUT = [[/\$CE\/zeno\//g, "$CE/"], [/(<caminho do clone>|<repo>)\/zeno(\/|(?=[`\s]|$))/gm, "$1$2"],
   [/`zeno\/bin\/zeno`/g, "`bin/zeno`"], [/clone do (`?)context-engineering(`?)/g, "clone do $1zeno$2"]];
 export const SOBRA = [/\$CE\/zeno\//, /\$CE\/avaliacao\//, /clone>\/zeno\b/, /<repo>\/zeno\b/];
@@ -81,6 +83,7 @@ function semPlacar(txt) {
 }
 
 export function layout(txt, f) {
+  if (!ESCOPO(f)) return txt;
   let t = f.startsWith("docs/") ? semPlacar(txt) : txt;
   for (const [de, para] of [...LAYOUT, ...(f === "AGENTS.md" ? AGENTS_PUB : [])]) t = t.replace(de, para);
   if (f.startsWith("docs/")) { const m = /^# .*\n/m.exec(t); t = m ? `${t.slice(0, m.index + m[0].length)}\n${NOTA}${t.slice(m.index + m[0].length)}` : NOTA + "\n" + t; }
@@ -233,7 +236,7 @@ export function checkRoot(ctx) {
 // 7. nenhum caminho do monorepo sobrando na doc, no README, no AGENTS.md e no bin/ (T119): a tabela LAYOUT não cobriu
 export function checkLayout(snap, arquivos) {
   const achados = [];
-  for (const f of arquivos.filter((x) => /^(docs|bin)\//.test(x) || x === "README.md" || x === "AGENTS.md"))
+  for (const f of arquivos.filter(ESCOPO))
     texto(snap, f).split("\n").forEach((l, k) => { if (SOBRA.some((r) => r.test(l))) achados.push(`${f}:${k + 1}`); });
   return /*G:portao-layout*/ achados.length ? reprova("layout", `caminho do monorepo no snapshot: ${resumo(achados)}`) : ok("layout");
 }

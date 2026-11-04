@@ -516,8 +516,10 @@ revista ganha linha nova com "substitui T<n>" (nada é apagado).
   O snapshot sai do commit (`git archive` do `zeno/` e do `docs/`), não da pasta no disco (nó `o-portao-monta-o-snapshot-do-commit-nao`, guarda `portao-commit`): o `git status` que barra a árvore suja não mostra o arquivo ignorado pelo git, que antes entraria no público.
 - **T119.** **A doc publicada no layout do repo público** (nó `a-doc-publicada-funciona-no-layout-do-re`, v0.1.1). A
   doc da raiz `docs/` segue escrita para o monorepo, onde o doc-exec dela a prova; quem adapta é o portão, na montagem.
-  Uma tabela fixa e pequena (`LAYOUT` em `core/portao.mjs`) troca nos `.md` e no `bin/zeno`: `$CE/` por `$CE/`,
-  `<caminho do clone>` e `<repo>` sem o `zeno`, o shim `` `bin/zeno` `` por `` `bin/zeno` `` e "clone do
+  Uma tabela fixa e pequena (`LAYOUT` em `core/portao.mjs`) troca em `docs/`, `bin/`, `README.md` e `AGENTS.md`, o mesmo
+  escopo do check 7 (`ESCOPO`; na v0.1.1 ela rodava em todo `.md` e entortava os trechos da spec que a descrevem; a
+  spec e os testes saem como estão desde a v0.1.2, nó `a-troca-de-layout-do-portao-roda-so-onde`): `$CE/zeno/` por `$CE/`,
+  `<caminho do clone>/zeno` e `<repo>/zeno` sem o `zeno`, o shim `` `zeno/bin/zeno` `` por `` `bin/zeno` `` e "clone do
   `context-engineering`" por "clone do `zeno`". O bloco de código que roda algo de `$CE/avaliacao/` sai, com o bloco de
   saída logo depois, e vira uma frase: o placar não vem nesta publicação. Cada página de `docs/` ganha, depois do
   título, uma nota fixa: ela vem do monorepo de origem, `zeno/` lá é a raiz aqui, e `avaliacao/` e `conhecimento/` não

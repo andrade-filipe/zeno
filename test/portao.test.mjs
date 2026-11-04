@@ -11,8 +11,11 @@ import { negarShell } from "../core/shell.mjs";
 import { VERSAO } from "../core/run.mjs";
 import { NOTA, SEM_PLACAR } from "../core/portao.mjs";
 
-test("portão: os 6 checks verdes; o snapshot entra no clone com commit e tag, sem push; o evento é assinado", async () => {
-  const P = await montarPortao();
+// v0.1.2: a spec descreve a própria troca e sai como está; só docs/, bin/, README.md e AGENTS.md são trocados
+const TROCA = "# Troca\n\nA tabela troca `$CE/zeno/` por `$CE/` e `<caminho do clone>/zeno` sem o `zeno`; o shim `zeno/bin/zeno`.\n";
+
+test("portão: os 7 checks verdes; o snapshot entra no clone com commit e tag, sem push; o evento é assinado", async () => {
+  const P = await montarPortao({ extra: { "spec/troca.md": TROCA } });
   const r = await P.publicar();
   assert.equal(r.codigo, 0, r.stdout + r.stderr);
   for (const id of ["nomes", "casa", "gitleaks", "lista", "historico", "root", "layout"]) assert.match(r.stderr, new RegExp(`ok +${id}`));
@@ -22,6 +25,7 @@ test("portão: os 6 checks verdes; o snapshot entra no clone com commit e tag, s
     assert.ok(doc.includes(s), `${s}\n---\n${doc}`);
   assert.ok(!/\$CE\/zeno|\$CE\/avaliacao|# Placar do Zeno|context-engineering/.test(doc), doc);
   assert.ok(doc.indexOf(NOTA.trim()) > doc.indexOf("# comecar.md"), "a nota vem depois do título");
+  assert.equal(P.ler("spec/troca.md"), TROCA, "a spec sai sem a troca de layout");
   for (const f of ["cli.mjs", "core/run.mjs", "LICENSE", "NOTICE", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "docs/comecar.md", "docs/como-fazer/aprovar-um-gate.md"])
     assert.ok(existsSync(join(P.pub, f)), `entra ${f}`);
   for (const f of [".agents", ".claude", "CLAUDE.md", "_lixo", ".githooks"]) assert.ok(!existsSync(join(P.pub, f)), `fica fora ${f}`);

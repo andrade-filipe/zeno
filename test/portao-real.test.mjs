@@ -5,7 +5,7 @@
 // O montar tira o snapshot do HEAD (git archive), não da árvore de trabalho: um arquivo solto ou só no stage (o censo
 // da avaliação põe o zeno/censo.md no stage) não entra (sonda portao-commit).
 import { test } from "node:test"; import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { raizTmp, gitReal } from "./ajuda.mjs";
@@ -25,4 +25,6 @@ test("portão real: o snapshot do zeno/ commitado passa nos checks nomes, casa e
   for (const f of [...PUBLICOS, "docs/comecar.md", "cli.mjs", "core/portao.mjs"]) assert.ok(arquivos.includes(f), `entra ${f}`);
   assert.ok(!arquivos.some((f) => /^(\.agents|\.claude|_lixo|\.githooks)\/|^CLAUDE\.md$/.test(f)), "nada do alvo");
   for (const c of [checkNomes(ctx, snap, arquivos), checkCasa(ctx, snap, arquivos), checkLista(snap, arquivos, faltam), checkLayout(snap, arquivos)]) assert.ok(c.ok, `${c.id}: ${c.msg}`);
+  // v0.1.2: a T119 da spec real descreve a troca e sai com o texto dela, sem ser trocada
+  assert.match(readFileSync(join(snap, "spec", "decisoes-tecnicas.md"), "utf8"), /`\$CE\/zeno\/` por `\$CE\/`/);
 });
