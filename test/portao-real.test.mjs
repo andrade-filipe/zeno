@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { raizTmp, gitReal } from "./ajuda.mjs";
 import { ZENO_DIR } from "../core/config.mjs";
-import { montar, listar, checkNomes, checkCasa, checkLista, caminhoNomes, PUBLICOS } from "../core/portao.mjs";
+import { montar, listar, checkNomes, checkCasa, checkLista, checkLayout, caminhoNomes, PUBLICOS } from "../core/portao.mjs";
 
 const noMonorepo = existsSync(join(ZENO_DIR, "..", "docs", "comecar.md"));
 const rodar = (cmd, { cwd }) => { const r = spawnSync("sh", ["-c", cmd], { cwd, encoding: "utf8" }); return { status: r.status ?? 1, stdout: r.stdout || "" }; };
@@ -24,5 +24,5 @@ test("portão real: o snapshot do zeno/ commitado passa nos checks nomes, casa e
   const arquivos = listar(snap);
   for (const f of [...PUBLICOS, "docs/comecar.md", "cli.mjs", "core/portao.mjs"]) assert.ok(arquivos.includes(f), `entra ${f}`);
   assert.ok(!arquivos.some((f) => /^(\.agents|\.claude|_lixo|\.githooks)\/|^CLAUDE\.md$/.test(f)), "nada do alvo");
-  for (const c of [checkNomes(ctx, snap, arquivos), checkCasa(ctx, snap, arquivos), checkLista(snap, arquivos, faltam)]) assert.ok(c.ok, `${c.id}: ${c.msg}`);
+  for (const c of [checkNomes(ctx, snap, arquivos), checkCasa(ctx, snap, arquivos), checkLista(snap, arquivos, faltam), checkLayout(snap, arquivos)]) assert.ok(c.ok, `${c.id}: ${c.msg}`);
 });

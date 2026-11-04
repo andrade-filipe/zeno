@@ -119,6 +119,8 @@ export function appendOnly(S) {
   if (lt.status === 0) for (const f of lt.stdout.split("\n").filter((x) => x.endsWith(".fio.md"))) arquivos.push(f.slice(f.indexOf(".agents/")));
   for (const f of new Set(arquivos)) {
     const head = g(["show", `HEAD:./${f}`]);
+    // status null: o git foi morto ou a saída estourou o buffer; pular aqui desligaria a guarda (fail-open), então reprova
+    if (head.status === null) { erros.push([f, 1, "append-only", "a versão do HEAD não pôde ser lida inteira (falha fechado)"]); continue; }
     if (head.status !== 0) continue;
     const idx = g(["show", `:./${f}`]);
     const agora = idx.status === 0 ? idx.stdout : "";

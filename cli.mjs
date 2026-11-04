@@ -83,7 +83,8 @@ const ctx = {
   perguntar, segredo,
   mostrar: (t) => process.stderr.write(t + "\n"), // na hora: o verbo interativo mostra antes de perguntar
   entrada: lerEntrada,
-  git: (args, { cwd }) => { const r = spawnSync("git", args, { cwd, encoding: "utf8" }); return { status: r.status, stdout: r.stdout || "", stderr: r.stderr || "" }; },
+  // maxBuffer: o padrão do Node é 1 MiB, e o ledger passa disso (ENOBUFS cortava o `git show` e o append-only)
+  git: (args, { cwd }) => { const r = spawnSync("git", args, { cwd, encoding: "utf8", maxBuffer: 1 << 30 }); return { status: r.status, stdout: r.stdout || "", stderr: r.stderr || "" }; },
   rodar: (cmd, { cwd }) => { const t = Date.now(); const r = spawnSync("sh", ["-c", cmd], { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }); return { status: r.status ?? 1, ms: Date.now() - t, stdout: r.stdout || "" }; },
   which: (bin) => { try { execFileSync("sh", ["-c", `command -v ${bin}`], { stdio: "ignore" }); return true; } catch { return false; } },
   // T107: o zeno ferramentas confere login e serviço por um comando de status da tabela fixa (core/ferramentas.mjs),

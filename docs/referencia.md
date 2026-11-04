@@ -16,6 +16,8 @@ verificado-em: 4372d91
 
 # A referência
 
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
+
 **Resumo.** Esta página aponta, e não copia. Cada linha leva à fonte da verdade de um assunto. A única lista desta
 página, a das guardas, é **gerada** do `zeno/guardas.json` e conferida pelo portão `doc-gerado`.
 

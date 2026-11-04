@@ -19,6 +19,8 @@ verificado-em: 4372d91
 
 # O glossário
 
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
+
 **Resumo.** Um termo, um sentido, uma grafia. A doc usa estes termos sempre do mesmo jeito. Os termos do Zeno são
 **gerados** da tabela da spec ([`zeno/spec/README.md`](../spec/README.md#glossário)). Os termos do repo, do hub, da
 avaliação e da doc são escritos aqui.

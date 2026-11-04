@@ -14,6 +14,8 @@ verificado-em: 6ae3549
 
 # Trabalhar num nó médio ou grande
 
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
+
 **Resumo.** Crie o nó com `zeno novo --tamanho`. Antes de cada fase de um nó grande, monte o contexto com
 `zeno contexto <id>`. Avance com `zeno avancar <id>`, passando as chaves da fase. Converse no fio do nó com
 `zeno msg`. Trabalho já feito fora do Zeno entra com `zeno registrar --retro`.

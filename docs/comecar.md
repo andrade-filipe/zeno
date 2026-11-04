@@ -17,6 +17,8 @@ verificado-em: 4372d91
 
 # O primeiro nó, em 15 minutos
 
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
+
 **Resumo.** Você instala o Zeno num repo descartável e fecha um nó pequeno pela via expressa. Depois leva um nó médio
 até o gate humano, aprova esse gate como pessoa e lê o placar. Nada aqui toca um repo seu de verdade.
 
@@ -31,14 +33,14 @@ recusa se tentar.
 
 ## 1. Aponte para o clone
 
-Diga ao shell onde está o clone do `context-engineering` e ponha o `zeno` no PATH desta sessão.
+Diga ao shell onde está o clone do `zeno` e ponha o `zeno` no PATH desta sessão.
 
 ```sh
-export CE=<caminho do clone do context-engineering>
+export CE=<caminho do clone do zeno>
 ```
 
 ```sh executavel
-export PATH="$CE/zeno/bin:$PATH"
+export PATH="$CE/bin:$PATH"
 zeno versao
 ```
 ```text saida
@@ -195,13 +197,7 @@ marcador, o ato foi de fora da sessão ([resíduos](../spec/seguranca.md#resídu
 
 O placar lê o ledger e mostra três métricas: o imposto do Sistema, o lead time e a espera em gate humano.
 
-```sh executavel
-node "$CE/avaliacao/placar/placar.mjs" --ledger .agents/ledger.jsonl --saida ../placar.md
-head -n 20 ../placar.md
-```
-```text saida
-# Placar do Zeno
-```
+Esta publicação não traz o placar: ele mora na `avaliacao/` do monorepo de origem.
 
 Com menos de 5 casos num estrato, o placar escreve **n insuficiente** e não tira conclusão. Cada métrica tem uma ficha que diz o
 que ela não mede. Veja Ler o placar.

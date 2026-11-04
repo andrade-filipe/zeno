@@ -9,12 +9,19 @@ import { valida } from "../core/assinatura.mjs";
 import { parseYaml } from "../core/yaml.mjs";
 import { negarShell } from "../core/shell.mjs";
 import { VERSAO } from "../core/run.mjs";
+import { NOTA, SEM_PLACAR } from "../core/portao.mjs";
 
 test("portão: os 6 checks verdes; o snapshot entra no clone com commit e tag, sem push; o evento é assinado", async () => {
   const P = await montarPortao();
   const r = await P.publicar();
   assert.equal(r.codigo, 0, r.stdout + r.stderr);
-  for (const id of ["nomes", "casa", "gitleaks", "lista", "historico", "root"]) assert.match(r.stderr, new RegExp(`ok +${id}`));
+  for (const id of ["nomes", "casa", "gitleaks", "lista", "historico", "root", "layout"]) assert.match(r.stderr, new RegExp(`ok +${id}`));
+  // T119: os caminhos do monorepo trocados, a nota no topo de cada página e o bloco do placar (com a saída) virou frase
+  const doc = P.ler("docs/comecar.md");
+  for (const s of ['export PATH="$CE/bin:$PATH"', "ln -s <caminho do clone>/bin/zeno", "O shim `bin/zeno`", "--de <caminho do clone>`", "clone do `zeno`", NOTA.trim(), SEM_PLACAR.trim(), "Fim."])
+    assert.ok(doc.includes(s), `${s}\n---\n${doc}`);
+  assert.ok(!/\$CE\/zeno|\$CE\/avaliacao|# Placar do Zeno|context-engineering/.test(doc), doc);
+  assert.ok(doc.indexOf(NOTA.trim()) > doc.indexOf("# comecar.md"), "a nota vem depois do título");
   for (const f of ["cli.mjs", "core/run.mjs", "LICENSE", "NOTICE", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "docs/comecar.md", "docs/como-fazer/aprovar-um-gate.md"])
     assert.ok(existsSync(join(P.pub, f)), `entra ${f}`);
   for (const f of [".agents", ".claude", "CLAUDE.md", "_lixo", ".githooks"]) assert.ok(!existsSync(join(P.pub, f)), `fica fora ${f}`);
@@ -34,7 +41,7 @@ test("portão: os 6 checks verdes; o snapshot entra no clone com commit e tag, s
   const e = P.A.ledger().find((x) => x.ev === "publicacao.preparada");
   assert.equal(e.dados.commit, g(["rev-parse", "HEAD"]));
   assert.equal(e.dados.tag, `v${VERSAO}`);
-  assert.deepEqual(e.dados.checks, { nomes: "ok", casa: "ok", gitleaks: "ok", lista: "ok", historico: "ok", root: "ok" });
+  assert.deepEqual(e.dados.checks, { nomes: "ok", casa: "ok", gitleaks: "ok", lista: "ok", historico: "ok", root: "ok", layout: "ok" });
   assert.ok(valida(e, parseYaml(P.A.ler(".agents/sistema.yaml")).obj.pessoas), "assinado pela pessoa");
   // de novo, com o commit do portão no clone: o histórico passa, mas a tag da versão já existe
   const antes = P.digital();

@@ -1,6 +1,6 @@
 # CLI `zeno` — contrato
 
-`zeno <verbo> [args] [--json]`. Node ESM sem dependências (D28). Entrada `zeno/cli.mjs`; shim `zeno/bin/zeno`
+`zeno <verbo> [args] [--json]`. Node ESM sem dependências (D28). Entrada `zeno/cli.mjs`; shim `bin/zeno`
 (`exec node "<zeno>/cli.mjs" "$@"`), que o Filipe liga no PATH (`ln -s …/zeno/bin/zeno ~/.local/bin/zeno`) **só até o 1º
 `zeno promover`**. O promover troca esse shim por um que roda a cópia fixada (T68), ou o move para o `_lixo/` no modo
 root (T95). Refazer o `ln -s` depois disso desliga a cópia fixada: o PATH volta a rodar o clone que o agente edita.
@@ -293,12 +293,14 @@ código marcados, T76), pede a passphrase (antes da prova, T72), roda os testes 
   `zeno/` inteiro commitado, pede a passphrase e roda a mesma prova isolada, mas não troca a cópia que guarda nem roda a
   frota. Monta um snapshot num diretório temporário (o `zeno/` sem `.agents/`, `.claude/`, `CLAUDE.md`, `_lixo/` e
   `.githooks/`; as páginas de `docs/` da lista fixa em `core/portao.mjs`; links reescritos, e o de fora do que entra vira
-  texto; o `CHANGELOG.md` gerado dos commits desde a origem da publicação anterior) e roda os 6 checks, todos falhando
+  texto; os caminhos do monorepo trocados pelos do repo público, T119; o `CHANGELOG.md` gerado dos commits desde a
+  origem da publicação anterior) e roda os 7 checks, todos falhando
   fechado: (1) `nomes`, a lista da máquina `~/.config/zeno/portao-nomes.txt`, sem acento e sem caixa, sendo que a lista
   ausente ou vazia reprova; (2) `casa`, a casa da máquina e qualquer `/home/<nome>` fora dos de exemplo; (3) `gitleaks`,
   com `detect --no-git` limpo, e sem ele reprova; (4) `lista`, nada fora da lista do que entra e nada faltando; (5)
   `historico`, o clone limpo, todo commit dele com um `publicacao.preparada` no ledger e a tag ainda livre; (6) `root`,
-  a cópia do root ativa. Recusa com 1 (`portao`) se algum reprova, e então nada é escrito no clone. Com os 6 verdes, o
+  a cópia do root ativa; (7) `layout`, nenhum `$CE/`, `$CE/avaliacao/` ou `<clone>/zeno` sobrando na doc, no
+  README, no AGENTS.md e no `bin/`. Recusa com 1 (`portao`) se algum reprova, e então nada é escrito no clone. Com os 7 verdes, o
   que estava no clone vai para o `_lixo/` da casa, o snapshot entra, e o portão faz o commit e a tag `v<versão>`
   e grava `publicacao.preparada` assinado. O push é da pessoa, no terminal dela.
   Na 1ª publicação (sem `publicacao.preparada` no ledger), o `CHANGELOG.md` sai só com o resumo fixo da versão, sem assunto de commit.

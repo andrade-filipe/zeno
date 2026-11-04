@@ -1,8 +1,8 @@
 // portao.mjs — o portão de publicação (T118). O `zeno promover --publicar <clone>` chama isto depois da prova isolada e
 // da passphrase, sem trocar a cópia que guarda. O portão monta um snapshot num diretório temporário: o zeno/ sem dado de
 // alvo, as páginas de docs/ da lista fixa (com os links reescritos) e o CHANGELOG gerado dos commits. Tudo sai do
-// commit (git archive), não da pasta no disco. Depois roda os 6
-// checks. Cada um falha fechado: falta de ferramenta, de lista ou de arquivo também reprova. Só com os 6 verdes ele
+// commit (git archive), não da pasta no disco, com os caminhos do monorepo trocados pelos do repo público (T119). Depois
+// roda os 7 checks. Cada um falha fechado: falta de ferramenta, de lista ou de arquivo também reprova. Só com os 7 verdes ele
 // escreve o snapshot no clone público, faz o commit e a tag e grava `publicacao.preparada`, assinado. O push é da pessoa.
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync, lstatSync, renameSync, cpSync, rmSync, realpathSync } from "node:fs";
 import { join, dirname, relative, resolve, isAbsolute } from "node:path";
@@ -56,6 +56,35 @@ export function reescrever(txt, origem, destino, { src, docs }) {
     const novo = relative(join("/", dirname(destino)), join("/", rel)) || ".";
     return `${img}[${texto}](${novo}${cam.endsWith("/") && !novo.endsWith("/") ? "/" : ""}${ancora})`;
   });
+}
+
+// T119: a doc vem do monorepo, onde o código mora em zeno/; no repo público ele está na raiz. Uma tabela fixa e pequena
+// troca os caminhos nos .md e no bin/zeno; o check 7 (`layout`) reprova o que sobrar, inclusive frase nova fora dela.
+export const LAYOUT = [[/\$CE\/zeno\//g, "$CE/"], [/(<caminho do clone>|<repo>)\/zeno(\/|(?=[`\s]|$))/gm, "$1$2"],
+  [/`zeno\/bin\/zeno`/g, "`bin/zeno`"], [/clone do (`?)context-engineering(`?)/g, "clone do $1zeno$2"]];
+export const SOBRA = [/\$CE\/zeno\//, /\$CE\/avaliacao\//, /clone>\/zeno\b/, /<repo>\/zeno\b/];
+export const NOTA = "> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.\n";
+export const SEM_PLACAR = "Esta publicação não traz o placar: ele mora na `avaliacao/` do monorepo de origem.\n";
+const AGENTS_PUB = [[/^- Desenho: vault .*\n/m, ""], [/^- Stack: .*\n/m, "- Stack: Node ESM **sem dependências**. As decisões de desenho (D…) ficam fora deste repositório.\n"]];
+
+// O bloco de código que roda algo da avaliacao/ sai, com o bloco de saída logo depois dele, e vira uma frase.
+function semPlacar(txt) {
+  const ls = txt.split("\n"), out = [];
+  for (let i = 0; i < ls.length; i++) {
+    if (!ls[i].startsWith("```")) { out.push(ls[i]); continue; }
+    let j = i + 1; while (j < ls.length && !ls[j].startsWith("```")) j++;
+    if (!ls.slice(i, j).some((l) => l.includes("$CE/avaliacao/"))) { out.push(...ls.slice(i, j + 1)); i = j; continue; }
+    if (ls[j + 1]?.startsWith("```text saida")) { j++; while (++j < ls.length && !ls[j].startsWith("```")); }
+    out.push(SEM_PLACAR.trimEnd()); i = j;
+  }
+  return out.join("\n");
+}
+
+export function layout(txt, f) {
+  let t = f.startsWith("docs/") ? semPlacar(txt) : txt;
+  for (const [de, para] of [...LAYOUT, ...(f === "AGENTS.md" ? AGENTS_PUB : [])]) t = t.replace(de, para);
+  if (f.startsWith("docs/")) { const m = /^# .*\n/m.exec(t); t = m ? `${t.slice(0, m.index + m[0].length)}\n${NOTA}${t.slice(m.index + m[0].length)}` : NOTA + "\n" + t; }
+  return t;
 }
 
 // O CHANGELOG sai dos commits do zeno/ (sem o .agents/) desde a origem da publicação anterior, agrupado por tipo. Na 1ª
@@ -116,8 +145,10 @@ function montarDe(ctx, raiz, snap, { src: repo, commit, desde }) {
   }
   for (const [f, de] of origem) {
     if (!f.endsWith(".md") || lstatSync(join(snap, f)).isSymbolicLink()) continue;
-    writeFileSync(join(snap, f), reescrever(readFileSync(join(snap, f), "utf8"), de, f, { src, docs }));
+    writeFileSync(join(snap, f), layout(reescrever(readFileSync(join(snap, f), "utf8"), de, f, { src, docs }), f));
   }
+  if (existsSync(join(snap, "bin", "zeno")) && !lstatSync(join(snap, "bin", "zeno")).isSymbolicLink())
+    writeFileSync(join(snap, "bin", "zeno"), layout(readFileSync(join(snap, "bin", "zeno"), "utf8"), "bin/zeno"));
   const cl = changelog(ctx, repo, commit, desde);
   if (cl === null) faltam.push("CHANGELOG.md (o git log falhou)"); else writeFileSync(join(snap, "CHANGELOG.md"), cl);
   return faltam;
@@ -199,7 +230,15 @@ export function checkRoot(ctx) {
   return /*G:portao-root*/ !(m && existsSync(m.atual)) ? reprova("root", `a cópia do root não está ativa (${ctx.root?.raiz || "/opt/zeno"}): rode antes o bloco C do roteiro da T82`) : ok("root");
 }
 
-// O portão inteiro: monta, roda os 6 checks e, só com todos verdes, escreve no clone, faz o commit e a tag e grava o
+// 7. nenhum caminho do monorepo sobrando na doc, no README, no AGENTS.md e no bin/ (T119): a tabela LAYOUT não cobriu
+export function checkLayout(snap, arquivos) {
+  const achados = [];
+  for (const f of arquivos.filter((x) => /^(docs|bin)\//.test(x) || x === "README.md" || x === "AGENTS.md"))
+    texto(snap, f).split("\n").forEach((l, k) => { if (SOBRA.some((r) => r.test(l))) achados.push(`${f}:${k + 1}`); });
+  return /*G:portao-layout*/ achados.length ? reprova("layout", `caminho do monorepo no snapshot: ${resumo(achados)}`) : ok("layout");
+}
+
+// O portão inteiro: monta, roda os 7 checks e, só com todos verdes, escreve no clone, faz o commit e a tag e grava o
 // evento assinado. A chave já está aberta (o promover a pediu antes da prova).
 export async function publicar(S, { src, commit, prova, pub, lixo }) {
   const ctx = S.ctx, tag = `v${VERSAO}`;
@@ -209,7 +248,7 @@ export async function publicar(S, { src, commit, prova, pub, lixo }) {
     const faltam = montar(ctx, src, snap, { commit, desde: anteriores.at(-1)?.dados?.origem });
     const arquivos = listar(snap);
     const checks = [checkNomes(ctx, snap, arquivos), checkCasa(ctx, snap, arquivos), checkGitleaks(ctx, snap),
-      checkLista(snap, arquivos, faltam), checkHistorico(ctx, pub, anteriores, tag), checkRoot(ctx)];
+      checkLista(snap, arquivos, faltam), checkHistorico(ctx, pub, anteriores, tag), checkRoot(ctx), checkLayout(snap, arquivos)];
     ctx.mostrar(`portão (${arquivos.length} arquivos no snapshot):\n${checks.map((c) => `  ${c.ok ? "ok      " : "REPROVA "} ${c.id}${c.msg ? `: ${c.msg}` : ""}`).join("\n")}`);
     const rep = checks.filter((c) => !c.ok);
     if (rep.length) throw new Recusa(1, "portao", `o portão reprovou ${rep.length} de ${checks.length} checks (${rep.map((c) => c.id).join(", ")}): nada foi escrito em ${pub}`);

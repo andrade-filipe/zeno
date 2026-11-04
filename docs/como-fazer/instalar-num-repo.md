@@ -15,6 +15,8 @@ verificado-em: 6ae3549
 
 # Instalar o Zeno num repo
 
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
+
 **Resumo.** Ponha o `zeno` no PATH. Num repo sem harness, rode `zeno install <dir>`. Num repo que já tem `CLAUDE.md`
 ou `.claude/`, rode `zeno install <dir> --adocao`, que não sobrescreve nada do que existe. Depois confira com
 `zeno status` e `zeno sync --check`.
@@ -25,10 +27,10 @@ ou `.claude/`, rode `zeno install <dir> --adocao`, que não sobrescreve nada do 
 
 ## 1. Ponha o `zeno` no PATH de vez
 
-O shim `zeno/bin/zeno` roda o `cli.mjs` do clone. Ligue o shim num diretório que já está no seu PATH:
+O shim `bin/zeno` roda o `cli.mjs` do clone. Ligue o shim num diretório que já está no seu PATH:
 
 ```sh
-ln -s <caminho do clone>/zeno/bin/zeno ~/.local/bin/zeno
+ln -s <caminho do clone>/bin/zeno ~/.local/bin/zeno
 ```
 
 Os hooks gerados chamam `zeno` pelo PATH. Por isso o `sync` recusa gerar os hooks quando o `zeno` não está no PATH:
@@ -172,7 +174,7 @@ de segurança primeiro (T106): `deriva de segurança em: .claude/settings.json; 
   grava um evento assinado no ledger do alvo ([cli](../../spec/cli.md#verbos-de-apoio)).
 
   ```sh pessoa
-  zeno promover --de <caminho do clone>/zeno
+  zeno promover --de <caminho do clone>
   ```
 
   **A cópia do root (T95).** Na casa, a cópia fixada é do seu usuário, e um agente fora do sandbox consegue trocá-la.

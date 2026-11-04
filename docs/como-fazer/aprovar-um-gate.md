@@ -15,6 +15,8 @@ verificado-em: 4372d91
 
 # Aprovar um gate
 
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
+
 **Resumo.** No seu terminal, fora do Claude Code, rode `zeno caixa --aprovar`. Leia o cartão de cada gate, escolha
 quais aprovar e digite a passphrase uma vez. Para reprovar, use `zeno gate <id> --reprovar --motivo "…"`. Todo comando
 desta página é de **pessoa**: um agente recebe a saída 3.

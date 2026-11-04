@@ -4,8 +4,7 @@ O Zeno: o sistema de processos que governa qualquer trabalho feito com agentes (
 CLI `zeno` como única porta de escrita, faixas, gates, orçamento, ledger). Inc. 1 (o esqueleto): core, CLI, módulo `nucleo`.
 
 - Spec técnica: [`spec/README.md`](spec/README.md) · decisões técnicas: [`spec/decisoes-tecnicas.md`](spec/decisoes-tecnicas.md).
-- Desenho: vault `1 Projects/Zeno/decisoes.md` (as decisões do desenho) · plano: `1 Projects/Zeno/plano.md`.
-- Stack: Node ESM **sem dependências**. Código próprio: nada importado de `../conhecimento/` nem de `../avaliacao/` (D3).
+- Stack: Node ESM **sem dependências**. As decisões de desenho (D…) ficam fora deste repositório.
 - Lê o `conhecimento/` só como dado (arquivos de nó), nunca como código.
 - Rodar: `node ./cli.mjs ajuda` (ou `zeno ajuda` com o shim `bin/zeno` no PATH).
 - Testes: `node --test test/*.test.mjs test/probes/*.test.mjs` · censo das guardas: `node test/censo.mjs` ([`guardas.json`](guardas.json)).

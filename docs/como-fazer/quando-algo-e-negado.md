@@ -16,10 +16,12 @@ fonte:
   - zeno/core/verbos/promover.mjs
   - zeno/core/verbos/guarda.mjs
   - zeno/core/habito.mjs
-verificado-em: 6ae3549
+verificado-em: 0954cee
 ---
 
 # Quando o Zeno nega algo
+
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
 
 **Resumo.** Uma recusa diz **o que** foi recusado e **qual regra**, e não ensina o contorno. Para o agente, a regra é
 uma só: **não contorne**. Pare, avise a pessoa e escale no fio do nó (`zeno msg <id> escalada`). A pessoa lê o código de
@@ -139,14 +141,14 @@ Como sair da trava:
   já rodou, e o `head -2 ~/.local/bin/zeno` mostra a linha "GERADO pelo zeno promover". Com a cópia do root
   (`/opt/zeno`, T95), o `zeno` do PATH é o `/usr/local/bin/zeno`, e o shim da casa foi para o `_lixo/`: ali o conserto é
   do bloco C do [roteiro da T82](../../spec/roteiro-t82.md). Na casa, o conserto depende do `promover`:
-  - **antes do primeiro `zeno promover`**, o shim é o link para o `zeno/bin/zeno` do clone. Se ele sumiu, ligue-o de
+  - **antes do primeiro `zeno promover`**, o shim é o link para o `bin/zeno` do clone. Se ele sumiu, ligue-o de
     novo ([Instalar](instalar-num-repo.md#1-ponha-o-zeno-no-path-de-vez)). A partir da cópia promovida com o conserto
     (7c5ed43), a mensagem do `sync` distingue os dois casos: sem cópia fixada, ela manda o `ln -s` do clone; com cópia
     fixada, manda pôr no PATH o shim do `promover`. Uma cópia promovida antes disso ainda dá o `ln -s` nos dois casos;
   - **depois do primeiro `zeno promover`**, o `~/.local/bin/zeno` é um arquivo gerado que roda a cópia fixada. **Não
     o troque pelo link do clone**: assim os hooks voltariam a rodar o código que o agente edita, e a cópia fixada
     deixaria de valer. Se o shim sumiu ou se a própria cópia fixada é o que quebrou, rode o `promover` pelo código do
-    clone, no diretório de um alvo: `node <caminho do clone>/zeno/cli.mjs promover --de <caminho do clone>/zeno`. É uma
+    clone, no diretório de um alvo: `node <caminho do clone>/cli.mjs promover --de <caminho do clone>`. É uma
     promoção inteira: pede o código commitado, a passphrase e de 1 a 2 minutos de testes e censo no bwrap. Ela promove
     o HEAD do clone, que pode ser mais novo que a cópia em uso, e grava o shim de novo.
   - Um `zeno` que quebra é um bug, e o conserto vira um nó no `zeno/`. O código novo só passa a guardar depois do

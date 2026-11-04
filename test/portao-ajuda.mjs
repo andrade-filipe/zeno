@@ -27,7 +27,9 @@ export async function montarPortao({ nomes = ["acme", "cliente-x"], gitleaks = "
   };
   for (const s of sem) delete arqs[s];
   escrever(src, arqs);
-  escrever(join(mono, "docs"), Object.fromEntries(DOCS.map((p) => [p, `# ${p}\n\n[a CLI](${p.includes("/") ? "../../" : "../"}zeno/spec/cli.md) · [o hub](../conhecimento/README.md)\n`])));
+  // T119: as frases de layout do monorepo que o portão troca (o PATH do clone, o shim, o bloco do placar com a saída)
+  const LAYOUT_MONO = "\nNo clone do `context-engineering`:\n\n```sh executavel\nexport PATH=\"$CE/zeno/bin:$PATH\"\nln -s <caminho do clone>/zeno/bin/zeno ~/bin/zeno\n```\n\nO shim `zeno/bin/zeno`; `zeno promover --de <caminho do clone>/zeno`.\n\n```sh executavel\nnode \"$CE/avaliacao/placar/placar.mjs\" --ledger x\n```\n```text saida\n# Placar do Zeno\n```\n\nFim.\n";
+  escrever(join(mono, "docs"), Object.fromEntries(DOCS.map((p) => [p, `# ${p}\n\n[a CLI](${p.includes("/") ? "../../" : "../"}zeno/spec/cli.md) · [o hub](../conhecimento/README.md)\n${LAYOUT_MONO}`])));
   if (ignorar.length) writeFileSync(join(mono, ".gitignore"), ignorar.join("\n") + "\n");
   for (const a of [["init", "-q", "-b", "main"], ["add", "-A"], ["commit", "-q", "-m", "fixture"]]) gitReal(a, { cwd: mono });
   const commit = gitReal(["rev-parse", "HEAD"], { cwd: mono }).stdout.trim();

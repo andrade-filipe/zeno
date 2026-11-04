@@ -11,7 +11,7 @@ fonte:
   - zeno/spec/decisoes-tecnicas.md
   - zeno/core/portao.mjs
   - zeno/SECURITY.md
-verificado-em: 4372d91
+verificado-em: 0954cee
 -->
 # zeno/ — o que executa
 
@@ -58,6 +58,8 @@ A doc em `docs/` explica e aponta, e não repete a spec.
 - Isolar a CLI de um agente: `zeno sessao <agente>` (T82, camada A); os passos com root estão no
   [roteiro da T82](spec/roteiro-t82.md).
 - Publicar uma versão: `zeno promover --publicar <clone público>` (T118), um ato de pessoa. Ele monta um snapshot do
-  commit (o `zeno/` e as páginas públicas do `docs/`), e não da pasta no disco, e roda 6 checks que falham fechado: os nomes da lista da máquina, a casa real, o gitleaks, a lista do que
-  entra, o histórico do clone e a cópia do root. Com os 6 verdes, faz o commit e a tag no clone. O push é da pessoa.
+  commit (o `zeno/` e as páginas públicas do `docs/`), e não da pasta no disco, com os caminhos do monorepo trocados
+  pelos do repo público (T119), e roda 7 checks que falham fechado: os nomes da lista da máquina, a casa real, o
+  gitleaks, a lista do que entra, o histórico do clone, a cópia do root e o layout (nenhum caminho do monorepo
+  sobrando). Com os 7 verdes, faz o commit e a tag no clone. O push é da pessoa.
 - As regras do agente nesta raiz estão no [`AGENTS.md`](AGENTS.md).

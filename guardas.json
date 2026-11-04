@@ -88,6 +88,16 @@
       "caminhos": ["core/portao.mjs"]
     },
     {
+      "id": "portao-layout",
+      "camada": 3,
+      "fecha": "T119",
+      "estado": "ativa",
+      "o_que": "o check 7 do portão reprova um caminho do monorepo ($CE/zeno/, $CE/avaliacao/, <clone>/zeno) que sobrou na doc, no README, no AGENTS.md ou no bin/",
+      "probe": "test/probes/portao-layout.test.mjs",
+      "mutacao": { "marcador": "/*G:portao-layout*/", "por": "false&&" },
+      "caminhos": ["core/portao.mjs"]
+    },
+    {
       "id": "piso-tamanho",
       "camada": 3,
       "fecha": "T115",

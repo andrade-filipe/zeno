@@ -514,3 +514,15 @@ revista ganha linha nova com "substitui T<n>" (nada é apagado).
   suportados; o macOS não, porque o `zeno sessao` precisa do bwrap.
   O 1º CHANGELOG sai só com o resumo da versão (nó `o-changelog-da-1-publicacao-sai-sem-os-a`, opção (b) do Filipe): os assuntos de ~100 commits do dia a dia poderiam levar um nome fora da lista; da 2ª publicação em diante, entram os assuntos desde a anterior.
   O snapshot sai do commit (`git archive` do `zeno/` e do `docs/`), não da pasta no disco (nó `o-portao-monta-o-snapshot-do-commit-nao`, guarda `portao-commit`): o `git status` que barra a árvore suja não mostra o arquivo ignorado pelo git, que antes entraria no público.
+- **T119.** **A doc publicada no layout do repo público** (nó `a-doc-publicada-funciona-no-layout-do-re`, v0.1.1). A
+  doc da raiz `docs/` segue escrita para o monorepo, onde o doc-exec dela a prova; quem adapta é o portão, na montagem.
+  Uma tabela fixa e pequena (`LAYOUT` em `core/portao.mjs`) troca nos `.md` e no `bin/zeno`: `$CE/` por `$CE/`,
+  `<caminho do clone>` e `<repo>` sem o `zeno`, o shim `` `bin/zeno` `` por `` `bin/zeno` `` e "clone do
+  `context-engineering`" por "clone do `zeno`". O bloco de código que roda algo de `$CE/avaliacao/` sai, com o bloco de
+  saída logo depois, e vira uma frase: o placar não vem nesta publicação. Cada página de `docs/` ganha, depois do
+  título, uma nota fixa: ela vem do monorepo de origem, `zeno/` lá é a raiz aqui, e `avaliacao/` e `conhecimento/` não
+  vêm. O `AGENTS.md` publicado perde a linha do vault e troca a do Stack por uma sem o `../conhecimento/`. O check 7,
+  `layout` (guarda `portao-layout`), reprova o que sobrar em `docs/`, `bin/`, `README.md` e `AGENTS.md`: frase nova fora
+  da tabela trava a publicação até a tabela ganhar a linha, de propósito. A versão da CLI sobe para 0.1.1; a do módulo
+  `nucleo` fica em 0.1.0, porque o conteúdo dele não mudou, e subir a versão mudaria o cabeçalho gerado em todos os alvos
+  da frota sem mudança de regra. Fora: reescrever a doc de conceitos e trazer o placar para o repo público.

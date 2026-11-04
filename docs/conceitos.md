@@ -19,10 +19,12 @@ fonte:
   - zeno/core/habito.mjs
   - zeno/spec/dominio.md
   - zeno/spec/instalacao.md
-verificado-em: 4372d91
+verificado-em: 0954cee
 ---
 
 # Os conceitos
+
+> Esta página vem do monorepo de origem do Zeno. Onde ela diz `zeno/`, aqui é a raiz deste repositório; a `avaliacao/` e o `conhecimento/` não vêm nesta publicação.
 
 **Resumo.** O repo separa três poderes: o que se sabe (`conhecimento/`), o que executa (`zeno/`) e o que julga
 (`avaliacao/`). No Zeno, todo trabalho é um **nó** que passa por 7 fases. A **faixa** do nó decide quais saídas de fase
